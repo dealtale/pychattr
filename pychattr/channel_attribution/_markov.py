@@ -7,6 +7,7 @@ Contains the model-fitting logic used for the Markov model.
 import math
 import collections
 import pickle
+import os
 
 import numpy as np
 import pandas as pd
@@ -17,7 +18,7 @@ def get_static_random_uniform():
     # (Must me the same size of the 'nuf' variable in the code below
     # We've done this change in order to make sure we'll have the result
     # on every run and every machine and every os.
-    with open('static_random_uniform.pkl', 'rb') as f:
+    with open(os.path.join(os.path.abspath(__file__), '..', 'static_random_uniform.pkl'), 'rb') as f:
         return pickle.load(f)
 
 class Fx(object):
