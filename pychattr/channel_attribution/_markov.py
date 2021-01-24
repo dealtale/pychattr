@@ -6,10 +6,19 @@ Contains the model-fitting logic used for the Markov model.
 
 import math
 import collections
+import pickle
 
 import numpy as np
 import pandas as pd
 
+
+def get_static_random_uniform():
+    # returns a static uniform array in the length of 1000000
+    # (Must me the same size of the 'nuf' variable in the code below
+    # We've done this change in order to make sure we'll have the result
+    # on every run and every machine and every os.
+    with open('static_random_uniform.pkl', 'rb') as f:
+        return pickle.load(f)
 
 class Fx(object):
     """Transition Matrix."""
@@ -112,8 +121,8 @@ def fit_markov(df, paths, convs, conv_val, nulls, nsim, max_step,
     else:
         var_null = []
 
-    if random_state:
-        np.random.seed(random_state)
+    # if random_state:
+    #     np.random.seed(random_state)
 
     # do we have revenues?
     flg_var_value = True if len(var_value) > 0 else False
@@ -404,7 +413,7 @@ def fit_markov(df, paths, convs, conv_val, nulls, nsim, max_step,
     ssval = 0
     c_last = 0
     iu = 0
-    vunif = np.random.uniform(size=nuf)
+    vunif = get_static_random_uniform()
 
     C = [0] * nchannels
     T = [0] * nchannels
@@ -430,7 +439,7 @@ def fit_markov(df, paths, convs, conv_val, nulls, nsim, max_step,
         C[c] = 1
         while npassi <= max_npassi:
             if iu >= nuf:
-                vunif = np.random.uniform(size=nuf)
+                vunif = get_static_random_uniform()
                 iu = 0
             c = S.sim(c, vunif[iu])
             iu += 1
@@ -457,7 +466,7 @@ def fit_markov(df, paths, convs, conv_val, nulls, nsim, max_step,
 
             if flg_var_value:
                 if iu >= nuf:
-                    vunif = np.random.uniform(size=nuf)
+                    vunif = get_static_random_uniform()
                     iu = 0
                 sval0 = v_vui[fV.sim(c_last, vunif[iu])]
                 iu += 1
